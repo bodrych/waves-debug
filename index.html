@@ -25,28 +25,12 @@
 	}
 	#app {
 		display: flex;
-		flex-direction: column;
 	}
 	#header {
-		display: flex;
-		flex-direction: row;
-		/*justify-content: space-between;*/
-		align-items: center;
+		/*align-items: center;*/
 	}
 	#header > div {
-		/*flex: 1;*/
 		padding: 5px;
-	}
-	#params {
-		display: flex;
-		flex-direction: column;
-	}
-	#params > div {
-		display: flex;
-		flex-direction: row;
-		flex-wrap: wrap;
-		/*justify-content: space-between;*/
-		align-items: center;
 	}
 	#params-first > div, #params-second > div, #params-third > div {
 		align-items: center;
@@ -55,15 +39,43 @@
 	#result {
 		padding: 5px;
 		overflow-x: auto;
+		border: 1px solid lightgray;
+		margin: 5px 0px 0px 0px;
+	}
+	#result-wrapper {
+		padding: 5px;
+	}
+	#footer {
+		padding: 5px;
+	}
+	.flex-row {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+	.flex-col {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+	label {
+		margin: 0px 5px 0px 0px;
+	}
+	input, select {
+		margin: 0px 10px 0px 0px;
+		padding: 5px;
+	}
+	.add-remove {
+		width: 50px;
 	}
 </style>
 </head>
 <body>
-	<div id="app">
-		<div id="header">
+	<div id="app" class="flex-col">
+		<div id="header" class="flex-row">
 			<div>
 				<label>Transaction type:</label>
-				<select v-model="type" >
+				<select v-model="type">
 					<option :value="type.id" v-for="type in types">{{ type.name }}</option>
 				</select>
 			</div>
@@ -75,37 +87,41 @@
 			</div>
 		</div>
 
-		<div id="params">
-			<div id="params-first">
-				<div><label>fee.assetId:</label><input v-model="dataArray[type].data.fee.accetId" type="text" name=""></div>
+		<div id="params" class="flex-col">
+			<div id="params-first" class="flex-col">
+				<div><label>fee.assetId:</label><input v-model="dataArray[type].data.fee.assetId" type="text" name=""></div>
 				<div><label>fee.tokens:</label><input v-model="dataArray[type].data.fee.tokens" type="text" name=""></div>
 				<div v-if="type == 3"><label>name:</label><input v-model="dataArray[type].data.name" type="text" name=""></div>
 				<div v-if="type == 3"><label>description:</label><input v-model="dataArray[type].data.description" type="text" name=""></div>
 				<div v-if="type == 3 || type == 5 || type == 6"><label>quantity:</label><input v-model="dataArray[type].data.quantity" type="text" name=""></div>
 				<div v-if="type == 3"><label>precision:</label><input v-model="dataArray[type].data.fee.precision" type="text" name=""></div>
 				<div v-if="type == 3 || type == 5 || type == 6"><label>reissuable:</label><input v-model="dataArray[type].data.reissuable" type="checkbox" name=""></div>
-				<div v-if="type == 4"><label>amount.assetId:</label><input v-model="dataArray[type].data.amount.accetId" type="text" name=""></div>
+				<div v-if="type == 4"><label>amount.assetId:</label><input v-model="dataArray[type].data.amount.assetId" type="text" name=""></div>
 				<div v-if="type == 4"><label>amount.tokens:</label><input v-model="dataArray[type].data.amount.tokens" type="text" name=""></div>
 				<div v-if="type == 4 || type == 8"><label>recipient:</label><input v-model="dataArray[type].data.recipient" type="text" name=""></div>
 				<div v-if="type == 4"><label>attachment:</label><input v-model="dataArray[type].data.attachment" type="text" name=""></div>
-				<div v-if="type == 5 || type == 6"><label>assetId:</label><input v-model="dataArray[type].data.accetId" type="text" name=""></div>
+				<div v-if="type == 5 || type == 6"><label>assetId:</label><input v-model="dataArray[type].data.assetId" type="text" name=""></div>
 				<div v-if="type == 8"><label>amount:</label><input v-model="dataArray[type].data.amount" type="text" name=""></div>
 				<div v-if="type == 9"><label>easeId:</label><input v-model="dataArray[type].data.leaseId" type="text" name=""></div>
 				<div v-if="type == 11"><label>totalAmount.assetId:</label><input v-model="dataArray[type].data.totalAmount.assetId" type="text" name=""></div>
 				<div v-if="type == 11"><label>totalAmount.tokens:</label><input v-model="dataArray[type].data.totalAmount.tokens" type="text" name=""></div>
 				<div v-if="type == 13"><label>script:</label><input v-model="dataArray[type].data.script" type="text" name=""></div>
-				<div v-if="type == 14"><label>minSponsoredAssetFee.assetId:</label><input v-model="dataArray[type].data.minSponsoredAssetFee.accetId" type="text" name=""></div>
+				<div v-if="type == 14"><label>minSponsoredAssetFee.assetId:</label><input v-model="dataArray[type].data.minSponsoredAssetFee.assetId" type="text" name=""></div>
 				<div v-if="type == 14"><label>minSponsoredAssetFee.tokens:</label><input v-model="dataArray[type].data.minSponsoredAssetFee.tokens" type="text" name=""></div>
 			</div>
-			<div id="params-second" v-if="type == 11">
-				<div v-for="(item, index) in dataArray[type].data.transfers">
+			<div id="params-second" v-if="type == 11" class="flex-col">
+				<div v-for="(item, index) in dataArray[type].data.transfers" class="flex-row">
 					<label>transfers[{{index}}].recipient:</label><input v-model="item.recipient" type="text" name="">
 					<label>transfers[{{index}}]amount:</label><input v-model="item.amount" type="text" name="">
-					<input type="submit" value="-" @click="dataArray[type].data.transfers.splice(index, 1)">
+					<input class="add-remove" type="submit" value="-" @click="dataArray[type].data.transfers.splice(index, 1)">
+					<input class="add-remove" type="submit" value="+" @click="dataArray[type].data.transfers.splice(index + 1, 0, {recipient: '', amount: 0})">
 				</div>
-				<input type="submit" value="+" @click="dataArray[type].data.transfers.push({recipient: '', amount: 0})">
+				<div v-if="dataArray[type].data.transfers.length == 0">
+					<input class="add-remove" type="submit" value="+" @click="dataArray[type].data.transfers.splice(0, 0, {recipient: '', amount: 0})">
+				</div>
 			</div>
-			<div id="params-third" v-if="type == 12" v-for="(item, index) in dataArray[type].data.data">
+			<div id="params-third" v-if="type == 12" class="flex-col">
+				<div v-for="(item, index) in dataArray[type].data.data" class="flex-row">
 					<div>
 						<label>data[{{index}}].type:</label>
 						<select v-model="item.type">
@@ -120,19 +136,25 @@
 					</div>
 					<div>
 						<label>data[{{index}}].value:</label>
+						<input v-if="item.type == 'string' || item.type == 'binary' || item.type == ''" v-model="item.value" type="text" name="">
+						<input v-if="item.type == 'boolean'" v-model="item.value" type="checkbox" name="">
+						<input v-if="item.type == 'integer'" v-model.number="item.value" type="number" name="">
 					</div>
-					<input v-if="item.type == 'string' || item.type == 'binary' || item.type == ''" v-model="item.value" type="text" name="">
-					<input v-if="item.type == 'boolean'" v-model="item.value" type="checkbox" name="">
-					<input v-if="item.type == 'integer'" v-model.number="item.value" type="number" name="">
-					<input type="submit" value="-" @click="dataArray[type].data.data.splice(index, 1)">
-					<input type="submit" value="+" @click="dataArray[type].data.data.push({type: 'integer', key: '', value: 0})">
+					<input class="add-remove" type="submit" value="-" @click="dataArray[type].data.data.splice(index, 1)">
+					<input class="add-remove" type="submit" value="+" @click="dataArray[type].data.data.splice(index + 1, 0, {type: 'integer', key: '', value: 0})">
+				</div>
+				<div v-if="dataArray[type].data.data.length == 0">
+					<input class="add-remove" type="submit" value="+" @click="dataArray[type].data.data.splice(0, 0, {type: 'integer', key: '', value: 0})">
+				</div>
 			</div>
 
 		</div>
 
-		<div id="result">
+		<div id="result-wrapper">
 			Result:
-			<pre>{{ result }}</pre>
+			<div id="result">
+				<pre>{{ result }}</pre>
+			</div>
 		</div>
 
 		<div id="footer">
@@ -164,12 +186,12 @@
 						data: {
 							fee: {
 								assetId: 'WAVES',
-								tokens: 0.001
+								tokens: '1.0'
 							},
-							name: 'test',
-							description: 'test',
-							quantity: 1000000,
-							precision: 8,
+							name: '',
+							description: '',
+							quantity: 0,
+							precision: 0,
 							reissuable: false
 						}
 					},
@@ -177,12 +199,12 @@
 					4: {
 						data: {
 							amount: {
-								assetId: 'WAVES',
-								tokens: 0.1
+								assetId: '',
+								tokens: ''
 							},
 							fee: {
 								assetId: 'WAVES',
-								tokens: 0.1
+								tokens: '0.001'
 							},
 							recipient: ''
 						}
@@ -192,10 +214,10 @@
 						data: {
 							fee: {
 								assetId: 'WAVES',
-								tokens: 0.001
+								tokens: ''
 							},
 							assetId: '',
-							quantity: 1000000,
+							quantity: 0,
 							reissuable: false
 						}
 					},
@@ -204,10 +226,10 @@
 						data: {
 							fee: {
 								assetId: 'WAVES',
-								tokens: 0.001
+								tokens: '0.001'
 							},
 							assetId: '',
-							quantity: 1000000,
+							quantity: 0,
 							reissuable: false
 						}
 					},
@@ -216,7 +238,7 @@
 						data: {
 							fee: {
 								assetId: 'WAVES',
-								tokens: 0.001
+								tokens: '0.001'
 							},
 							amount: 0,
 							recipient: ''
@@ -227,7 +249,7 @@
 						data: {
 							fee: {
 								assetId: 'WAVES',
-								tokens: 0.001
+								tokens: '0.001'
 							},
 							leaseId: ''
 						}
@@ -236,12 +258,12 @@
 					11: {
 						data: {
 							totalAmount: {
-								assetId: 'WAVES',
-								tokens: 0.1
+								assetId: '',
+								tokens: ''
 							},
 							fee: {
 								assetId: 'WAVES',
-								tokens: 0.1
+								tokens: '0.001'
 							},
 							transfers: [
 							{
@@ -256,18 +278,19 @@
 						data: {
 							fee: {
 								assetId: 'WAVES',
-								tokens: 0.1
+								tokens: '0.005'
 							},
 							data: [
-							{type: 'string', key: 'test', value: 'ok'}
+								{type: 'string', key: '', value: ''}
 							]
 						}
 					},
+					// set script
 					13: {
 						data: {
 							fee: {
 								assetId: 'WAVES',
-								tokens: 0.1
+								tokens: '0.01'
 							},
 							script: ''
 						}
@@ -276,12 +299,12 @@
 					14: {
 						data: {
 							minSponsoredAssetFee: {
-								assetId: 'WAVES',
-								tokens: 0.1
+								assetId: '',
+								tokens: ''
 							},
 							fee: {
 								assetId: 'WAVES',
-								tokens: 0.1
+								tokens: ''
 							}
 						}
 					},
@@ -324,15 +347,7 @@
 						console.log(res);
 					} catch (err) {
 						alert(err.message);
-					}
-				},
-				setInput: function(type) {
-					if (type == 'integer') {
-						return 'number';
-					} else if (type == 'boolean') {
-						return 'checkbox';
-					} else {
-						return 'text';
+						console.log(err);
 					}
 				}
 			}
