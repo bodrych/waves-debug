@@ -122,12 +122,21 @@
 						data: 
 						<ul>
 							<li v-for="(item, index) in dataArray[type].data.data">
-								type: <input v-model="item.type" type="text" name="">
+								type:
+								<select v-model="item.type">
+									<option value="integer">integer</option>
+									<option value="string">string</option>
+									<option value="boolean">boolean</option>
+									<option value="binary">binary</option>
+								</select>
 								key: <input v-model="item.key" type="text" name="">
-								value: <input v-model="item.value" type="text" name="">
+								value:
+								<input v-if="item.type == 'string' || item.type == 'binary' || item.type == ''" v-model="item.value" type="text" name="">
+								<input v-if="item.type == 'boolean'" v-model="item.value" type="checkbox" name="">
+								<input v-if="item.type == 'integer'" v-model.number="item.value" type="number" name="">
 								<input type="submit" value="-" @click="dataArray[type].data.data.splice(index, 1)">
 							</li>
-							<input type="submit" value="+" @click="dataArray[type].data.data.push({type: '', key: '', value: ''})">
+							<input type="submit" value="+" @click="dataArray[type].data.data.push({type: 'integer', key: '', value: 0})">
 						</ul>
 					</li>
 				</ul>
@@ -157,7 +166,7 @@
 			Result:
 			<pre>{{ result }}</pre>
 		</div>
-		
+
 <!-- 		<div id="footer" class="flex-item">
 			<a href="https://github.com/bodrych/waveswall">GitHub</a>
 			<a href="https://forum.wavesplatform.com/t/waves-keeper-beta/3547">Waves Keeper</a>
@@ -347,6 +356,15 @@
 						console.log(res);
 					} catch (err) {
 						alert(err.message);
+					}
+				},
+				setInput: function(type) {
+					if (type == 'integer') {
+						return 'number';
+					} else if (type == 'boolean') {
+						return 'checkbox';
+					} else {
+						return 'text';
 					}
 				}
 			}
