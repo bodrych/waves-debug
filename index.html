@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.min.js"></script>
+	<script src="https://unpkg.com/base-58@0.0.1/Base58.js"></script>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAABFvgAARb4B0IHyYgAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAIpSURBVHic5du5edtAFEXhM66HqM/OBGVWexz2ohBO/PhJFJZZ3oLlNkCcP5BIYACByzmPj8fjb+Q1pKgPzjmPwBtASunjdrv9ibiOEICv8c8LCUJwB5iLl0UguAKsxcu8EdwASuJlngguADXxMi8Ec4CWeJkHgilAT7zMGsEMQCNeZolgAqAZL7NCUAewiJdZIKgCWMbLtBHUADziZZoIKgCe8TIthG6AiHiZBkIXQGS8rBehGWAP8bIehCaAPcXLWhGqAfYYL2tBqALYc7ysFqEY4AjxshqEIoAjxctKETYBjhgvK0FYBThyvGwLYRHgDPGyNYRZgDPFy5YQfgCcMV42h/AN4MzxsleEJ8AV4mVfERJcK14mCOmK8bKU0sevaZo+oy8katM0fSaA+/3+O6UUelAhYOMwDO/PP4IXQxiHYXiHl3+DF0F4xsPMF6GTI3yLh4WvwidF+BEPKz+GToYwGw8bP4dPgrAYDwU3RA6OsBoPhbfEDoqwGQ8VN0UPhlAUD5W3xQ+CUBwPDQ9Gdo5QFQ+Nj8Z2ilAdDx0PR3eG0BQPnY/Hd4LQHA8KBySCEbriQemITBBCdzwoHpJyRlCJB+Vjck4IavFgcFDSGEE1HoyOyhohqMeD4WFpZQSTeDA+Lq+EYBYPDi9MdCKYxoPTKzONCObx4PjSVCWCSzw4vzZXiOAWDwEvTm4guMZD0KuzCwju8RD48vQLQkh8+HLO4//zCWH7B6TVRCpVqUZ2AAAAAElFTkSuQmCC" />
+	<title>Waves Debug</title>
+	<style>
+	body {
+		font-family: Consolas, monospace;
+		font-size: 13px;
+	}
+	.bordered {
+		border: 1px solid lightgray;
+		border-radius:5px;
+	}
+	input {
+		font-family: inherit;
+		font-size: inherit;
+	}
+	#params > ul {
+		list-style-type: none;
+		padding: 0;
+	}
+</style>
+</head>
+<body>
+	<div id="app" class="flex-item">
+		<div>
+			Transaction type:
+			<select v-model="type" >
+				<option :value="type.id" v-for="type in types">{{ type.name }}</option>
+			</select>
+		</div>
+		<div>
+			<div id="params" v-if="type == 3">
+				<ul>
+					<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
+					<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
+					<li>name: <input v-model="dataArray[type].data.name" type="text" name=""></li>
+					<li>description: <input v-model="dataArray[type].data.description" type="text" name=""></li>
+					<li>quantity: <input v-model="dataArray[type].data.quantity" type="text" name=""></li>
+					<li>precision: <input v-model="dataArray[type].data.fee.precision" type="text" name=""></li>
+					<li>reissuable: <input v-model="dataArray[type].data.reissuable" type="checkbox" name=""></li>
+				</ul>
+			</div>
+
+			<div id="params" v-if="type == 4">
+				<ul>
+					<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
+					<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
+					<li>amount.assetId: <input v-model="dataArray[type].data.amount.accetId" type="text" name=""></li>
+					<li>amount.tokens: <input v-model="dataArray[type].data.amount.tokens" type="text" name=""></li>
+					<li>recipient: <input v-model="dataArray[type].data.recipient" type="text" name=""></li>
+				</ul>
+			</div>
+
+			<div id="params" v-if="type == 5">
+				<ul>
+					<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
+					<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
+					<li>reissuable: <input v-model="dataArray[type].data.reissuable" type="checkbox" name=""></li>
+					<li>quantity: <input v-model="dataArray[type].data.quantity" type="text" name=""></li>
+					<li>assetId: <input v-model="dataArray[type].data.accetId" type="text" name=""></li>
+				</ul>
+			</div>
+
+			<div id="params" v-if="type == 6">
+				<ul>
+					<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
+					<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
+					<li>reissuable: <input v-model="dataArray[type].data.reissuable" type="checkbox" name=""></li>
+					<li>quantity: <input v-model="dataArray[type].data.quantity" type="text" name=""></li>
+					<li>assetId: <input v-model="dataArray[type].data.accetId" type="text" name=""></li>
+				</ul>
+			</div>
+
+			<div id="params" v-if="type == 8">
+				<ul>
+					<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
+					<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
+					<li>amount: <input v-model="dataArray[type].data.amount" type="text" name=""></li>
+					<li>recipient: <input v-model="dataArray[type].data.recipient" type="text" name=""></li>
+				</ul>
+			</div>
+
+			<div id="params" v-if="type == 9">
+				<ul>
+					<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
+					<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
+					<li>leaseId: <input v-model="dataArray[type].data.leaseId" type="text" name=""></li>
+				</ul>
+			</div>
+
+			<div id="params" v-if="type == 11">
+				<ul>
+					<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
+					<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
+					<li>totalAmount.assetId: <input v-model="dataArray[type].data.totalAmount.assetId" type="text" name=""></li>
+					<li>totalAmount.tokens: <input v-model="dataArray[type].data.totalAmount.tokens" type="text" name=""></li>
+					<li>
+						transfers: 
+						<ul>
+							<li v-for="(item, index) in dataArray[type].data.transfers">
+								recipient: <input v-model="item.recipient" type="text" name="">
+								amount: <input v-model="item.amount" type="text" name="">
+								<input type="submit" value="-" @click="dataArray[type].data.transfers.splice(index, 1)">
+							</li>
+							<input type="submit" value="+" @click="dataArray[type].data.transfers.push({recipient: '', amount: 0})">
+						</ul>
+					</li>
+				</ul>
+			</div>
+
+			<div id="params" v-if="type == 12">
+				<ul>
+					<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
+					<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
+					<li>
+						data: 
+						<ul>
+							<li v-for="(item, index) in dataArray[type].data.data">
+								type: <input v-model="item.type" type="text" name="">
+								key: <input v-model="item.key" type="text" name="">
+								value: <input v-model="item.value" type="text" name="">
+								<input type="submit" value="-" @click="dataArray[type].data.data.splice(index, 1)">
+							</li>
+							<input type="submit" value="+" @click="dataArray[type].data.data.push({type: '', key: '', value: ''})">
+						</ul>
+					</li>
+				</ul>
+			</div>
+
+			<div id="params" v-if="type == 13">
+				<ul>
+					<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
+					<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
+					<li>script: <input v-model="dataArray[type].data.script" type="text" name=""></li>
+				</ul>
+			</div>
+			<input type="submit" value="signTx" @click="signTx(type)">
+			<input type="submit" value="signAndPublishTx" @click="signAndPublishTx(type)">
+		</div>
+
+		<div id="params" v-if="type == 14">
+				<ul>
+					<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
+					<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
+					<li>minSponsoredAssetFee.assetId: <input v-model="dataArray[type].data.minSponsoredAssetFee.accetId" type="text" name=""></li>
+					<li>minSponsoredAssetFee.tokens: <input v-model="dataArray[type].data.minSponsoredAssetFee.tokens" type="text" name=""></li>
+				</ul>
+			</div>
+
+		<div id="result">
+			Result:
+			<pre>{{ result }}</pre>
+		</div>
+		
+<!-- 		<div id="footer" class="flex-item">
+			<a href="https://github.com/bodrych/waveswall">GitHub</a>
+			<a href="https://forum.wavesplatform.com/t/waves-keeper-beta/3547">Waves Keeper</a>
+		</div> -->
+	</div>
+	<script>
+		var app = new Vue({
+			el: '#app',
+			data: {
+				type: 4,
+				result: '',
+				types: [
+				{id: 3, name: 'Issue'},
+				{id: 4, name: 'Transfer'},
+				{id: 5, name: 'Reissue'},
+				{id: 6, name: 'Burn'},
+				{id: 8, name: 'Lease'},
+				{id: 9, name: 'Cancel leasing'},
+				{id: 11, name: 'Mass Transfer'},
+				{id: 12, name: 'Data'},
+				{id: 13, name: 'Set script'},
+				{id: 14, name: 'Sponsorship'}
+				],
+				dataArray: {
+					// issue
+					3: {
+						data: {
+							fee: {
+								assetId: 'WAVES',
+								tokens: 0.001
+							},
+							name: 'test',
+							description: 'test',
+							quantity: 1000000,
+							precision: 8,
+							reissuable: false
+						}
+					},
+					// transfer
+					4: {
+						data: {
+							amount: {
+								assetId: 'WAVES',
+								tokens: 0.1
+							},
+							fee: {
+								assetId: 'WAVES',
+								tokens: 0.1
+							},
+							recipient: ''
+						}
+					},
+					// reissue
+					5: {
+						data: {
+							fee: {
+								assetId: 'WAVES',
+								tokens: 0.001
+							},
+							assetId: '',
+							quantity: 1000000,
+							reissuable: false
+						}
+					},
+					// burn
+					6: {
+						data: {
+							fee: {
+								assetId: 'WAVES',
+								tokens: 0.001
+							},
+							assetId: '',
+							quantity: 1000000,
+							reissuable: false
+						}
+					},
+					// lease
+					8: {
+						data: {
+							fee: {
+								assetId: 'WAVES',
+								tokens: 0.001
+							},
+							amount: 0,
+							recipient: ''
+						}
+					},
+					// cancel leasing
+					9: {
+						data: {
+							fee: {
+								assetId: 'WAVES',
+								tokens: 0.001
+							},
+							leaseId: ''
+						}
+					},
+					// mass transfer
+					11: {
+						data: {
+							totalAmount: {
+								assetId: 'WAVES',
+								tokens: 0.1
+							},
+							fee: {
+								assetId: 'WAVES',
+								tokens: 0.1
+							},
+							transfers: [
+								{
+									recipient: '',
+									ammount: ''
+								}
+							]
+						}
+					},
+					// data tx
+					12: {
+						data: {
+							fee: {
+								assetId: 'WAVES',
+								tokens: 0.1
+							},
+							data: [
+							{type: 'string', key: 'test', value: 'ok'}
+							]
+						}
+					},
+					13: {
+						data: {
+							fee: {
+								assetId: 'WAVES',
+								tokens: 0.1
+							},
+							script: ''
+						}
+					},
+					// sponsorship
+					14: {
+						data: {
+							minSponsoredAssetFee: {
+								assetId: 'WAVES',
+								tokens: 0.1
+							},
+							fee: {
+								assetId: 'WAVES',
+								tokens: 0.1
+							}
+						}
+					},
+				}
+			},
+			created: function() {
+				setTimeout(() => {
+					if (!this.checkKeeper()) {
+						alert('Please, install Waves Keeper');
+					}
+				}, 1000);
+			},
+			methods: {
+				checkKeeper: function() {
+					return typeof window.Waves !== 'undefined';
+				},
+				signTx: async function(type) {
+					let data = this.dataArray[type].data;
+					let params = {
+						type: type,
+						data: data
+					}
+					try {
+						let res = await window.Waves.signTransaction(params);
+						this.result = res;
+						console.log(res);
+					} catch (err) {
+						alert(err.message);
+					}
+				},
+				signAndPublishTx: async function(type) {
+					let data = this.dataArray[type].data;
+					let params = {
+						type: type,
+						data: data
+					}
+					try {
+						let res = await window.Waves.signAndPublishTransaction(params);
+						this.result = res;
+						console.log(res);
+					} catch (err) {
+						alert(err.message);
+					}
+				}
+			}
+		});
+	</script>
+</body>
+</html>
