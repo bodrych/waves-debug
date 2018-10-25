@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
 	<script src="https://unpkg.com/base-58@0.0.1/Base58.js"></script>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -35,142 +35,71 @@
 			</select>
 		</div>
 		<div>
-			<div id="params" v-if="type == 3">
-				<ul>
-					<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
-					<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
-					<li>name: <input v-model="dataArray[type].data.name" type="text" name=""></li>
-					<li>description: <input v-model="dataArray[type].data.description" type="text" name=""></li>
-					<li>quantity: <input v-model="dataArray[type].data.quantity" type="text" name=""></li>
-					<li>precision: <input v-model="dataArray[type].data.fee.precision" type="text" name=""></li>
-					<li>reissuable: <input v-model="dataArray[type].data.reissuable" type="checkbox" name=""></li>
-				</ul>
-			</div>
-
-			<div id="params" v-if="type == 4">
-				<ul>
-					<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
-					<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
-					<li>amount.assetId: <input v-model="dataArray[type].data.amount.accetId" type="text" name=""></li>
-					<li>amount.tokens: <input v-model="dataArray[type].data.amount.tokens" type="text" name=""></li>
-					<li>recipient: <input v-model="dataArray[type].data.recipient" type="text" name=""></li>
-				</ul>
-			</div>
-
-			<div id="params" v-if="type == 5">
-				<ul>
-					<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
-					<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
-					<li>reissuable: <input v-model="dataArray[type].data.reissuable" type="checkbox" name=""></li>
-					<li>quantity: <input v-model="dataArray[type].data.quantity" type="text" name=""></li>
-					<li>assetId: <input v-model="dataArray[type].data.accetId" type="text" name=""></li>
-				</ul>
-			</div>
-
-			<div id="params" v-if="type == 6">
-				<ul>
-					<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
-					<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
-					<li>reissuable: <input v-model="dataArray[type].data.reissuable" type="checkbox" name=""></li>
-					<li>quantity: <input v-model="dataArray[type].data.quantity" type="text" name=""></li>
-					<li>assetId: <input v-model="dataArray[type].data.accetId" type="text" name=""></li>
-				</ul>
-			</div>
-
-			<div id="params" v-if="type == 8">
-				<ul>
-					<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
-					<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
-					<li>amount: <input v-model="dataArray[type].data.amount" type="text" name=""></li>
-					<li>recipient: <input v-model="dataArray[type].data.recipient" type="text" name=""></li>
-				</ul>
-			</div>
-
-			<div id="params" v-if="type == 9">
-				<ul>
-					<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
-					<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
-					<li>leaseId: <input v-model="dataArray[type].data.leaseId" type="text" name=""></li>
-				</ul>
-			</div>
-
-			<div id="params" v-if="type == 11">
-				<ul>
-					<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
-					<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
-					<li>totalAmount.assetId: <input v-model="dataArray[type].data.totalAmount.assetId" type="text" name=""></li>
-					<li>totalAmount.tokens: <input v-model="dataArray[type].data.totalAmount.tokens" type="text" name=""></li>
-					<li>
-						transfers: 
-						<ul>
-							<li v-for="(item, index) in dataArray[type].data.transfers">
-								recipient: <input v-model="item.recipient" type="text" name="">
-								amount: <input v-model="item.amount" type="text" name="">
-								<input type="submit" value="-" @click="dataArray[type].data.transfers.splice(index, 1)">
-							</li>
-							<input type="submit" value="+" @click="dataArray[type].data.transfers.push({recipient: '', amount: 0})">
-						</ul>
-					</li>
-				</ul>
-			</div>
-
-			<div id="params" v-if="type == 12">
-				<ul>
-					<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
-					<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
-					<li>
-						data: 
-						<ul>
-							<li v-for="(item, index) in dataArray[type].data.data">
-								type:
-								<select v-model="item.type">
-									<option value="integer">integer</option>
-									<option value="string">string</option>
-									<option value="boolean">boolean</option>
-									<option value="binary">binary</option>
-								</select>
-								key: <input v-model="item.key" type="text" name="">
-								value:
-								<input v-if="item.type == 'string' || item.type == 'binary' || item.type == ''" v-model="item.value" type="text" name="">
-								<input v-if="item.type == 'boolean'" v-model="item.value" type="checkbox" name="">
-								<input v-if="item.type == 'integer'" v-model.number="item.value" type="number" name="">
-								<input type="submit" value="-" @click="dataArray[type].data.data.splice(index, 1)">
-							</li>
-							<input type="submit" value="+" @click="dataArray[type].data.data.push({type: 'integer', key: '', value: 0})">
-						</ul>
-					</li>
-				</ul>
-			</div>
-
-			<div id="params" v-if="type == 13">
-				<ul>
-					<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
-					<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
-					<li>script: <input v-model="dataArray[type].data.script" type="text" name=""></li>
-				</ul>
-			</div>
+			<ul>
+				<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
+				<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
+				<li v-if="type == 3">name: <input v-model="dataArray[type].data.name" type="text" name=""></li>
+				<li v-if="type == 3">description: <input v-model="dataArray[type].data.description" type="text" name=""></li>
+				<li v-if="type == 3 || type == 5 || type == 6">quantity: <input v-model="dataArray[type].data.quantity" type="text" name=""></li>
+				<li v-if="type == 3">precision: <input v-model="dataArray[type].data.fee.precision" type="text" name=""></li>
+				<li v-if="type == 3 || type == 5 || type == 6">reissuable: <input v-model="dataArray[type].data.reissuable" type="checkbox" name=""></li>
+				<li v-if="type == 4">amount.assetId: <input v-model="dataArray[type].data.amount.accetId" type="text" name=""></li>
+				<li v-if="type == 4">amount.tokens: <input v-model="dataArray[type].data.amount.tokens" type="text" name=""></li>
+				<li v-if="type == 4 || type == 8">recipient: <input v-model="dataArray[type].data.recipient" type="text" name=""></li>
+				<li v-if="type == 5 || type == 6">assetId: <input v-model="dataArray[type].data.accetId" type="text" name=""></li>
+				<li v-if="type == 8">amount: <input v-model="dataArray[type].data.amount" type="text" name=""></li>
+				<li v-if="type == 9">leaseId: <input v-model="dataArray[type].data.leaseId" type="text" name=""></li>
+				<li v-if="type == 11">totalAmount.assetId: <input v-model="dataArray[type].data.totalAmount.assetId" type="text" name=""></li>
+				<li v-if="type == 11">totalAmount.tokens: <input v-model="dataArray[type].data.totalAmount.tokens" type="text" name=""></li>
+				<li v-if="type == 11">
+					transfers: 
+					<ul>
+						<li v-for="(item, index) in dataArray[type].data.transfers">
+							recipient: <input v-model="item.recipient" type="text" name="">
+							amount: <input v-model="item.amount" type="text" name="">
+							<input type="submit" value="-" @click="dataArray[type].data.transfers.splice(index, 1)">
+						</li>
+						<input type="submit" value="+" @click="dataArray[type].data.transfers.push({recipient: '', amount: 0})">
+					</ul>
+				</li>
+				<li v-if="type == 12">
+					data: 
+					<ul>
+						<li v-for="(item, index) in dataArray[type].data.data">
+							type:
+							<select v-model="item.type">
+								<option value="integer">integer</option>
+								<option value="string">string</option>
+								<option value="boolean">boolean</option>
+								<option value="binary">binary</option>
+							</select>
+							key: <input v-model="item.key" type="text" name="">
+							value:
+							<input v-if="item.type == 'string' || item.type == 'binary' || item.type == ''" v-model="item.value" type="text" name="">
+							<input v-if="item.type == 'boolean'" v-model="item.value" type="checkbox" name="">
+							<input v-if="item.type == 'integer'" v-model.number="item.value" type="number" name="">
+							<input type="submit" value="-" @click="dataArray[type].data.data.splice(index, 1)">
+						</li>
+						<input type="submit" value="+" @click="dataArray[type].data.data.push({type: 'integer', key: '', value: 0})">
+					</ul>
+				</li>
+				<li v-if="type == 13">script: <input v-model="dataArray[type].data.script" type="text" name=""></li>
+				<li v-if="type == 14">minSponsoredAssetFee.assetId: <input v-model="dataArray[type].data.minSponsoredAssetFee.accetId" type="text" name=""></li>
+				<li v-if="type == 14">minSponsoredAssetFee.tokens: <input v-model="dataArray[type].data.minSponsoredAssetFee.tokens" type="text" name=""></li>
+			</ul>
 			<input type="submit" value="signTx" @click="signTx(type)">
 			<input type="submit" value="signAndPublishTx" @click="signAndPublishTx(type)">
 		</div>
-
-		<div id="params" v-if="type == 14">
-				<ul>
-					<li>fee.assetId: <input v-model="dataArray[type].data.fee.accetId" type="text" name=""></li>
-					<li>fee.tokens: <input v-model="dataArray[type].data.fee.tokens" type="text" name=""></li>
-					<li>minSponsoredAssetFee.assetId: <input v-model="dataArray[type].data.minSponsoredAssetFee.accetId" type="text" name=""></li>
-					<li>minSponsoredAssetFee.tokens: <input v-model="dataArray[type].data.minSponsoredAssetFee.tokens" type="text" name=""></li>
-				</ul>
-			</div>
 
 		<div id="result">
 			Result:
 			<pre>{{ result }}</pre>
 		</div>
 
-<!-- 		<div id="footer" class="flex-item">
-			<a href="https://github.com/bodrych/waveswall">GitHub</a>
-			<a href="https://forum.wavesplatform.com/t/waves-keeper-beta/3547">Waves Keeper</a>
-		</div> -->
+		<div id="footer">
+			<a href="https://github.com/bodrych/waves-debug">GitHub</a>
+			<!-- 			<a href="https://forum.wavesplatform.com/t/waves-keeper-beta/3547">Waves Keeper</a> -->
+		</div>
 	</div>
 	<script>
 		var app = new Vue({
@@ -276,10 +205,10 @@
 								tokens: 0.1
 							},
 							transfers: [
-								{
-									recipient: '',
-									ammount: ''
-								}
+							{
+								recipient: '',
+								ammount: ''
+							}
 							]
 						}
 					},
