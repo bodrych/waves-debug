@@ -9,7 +9,7 @@
 	<title>Waves Debug</title>
 	<style>
 	body {
-		font-family: Verdana, Consolas, monospace;
+		font-family: Consolas, monospace;
 		font-size: 14px;
 	}
 	.bordered {
@@ -20,14 +20,11 @@
 		font-family: inherit;
 		font-size: inherit;
 	}
-	input[type=text], input[type=number], input[type=checkbox] {
+	select, input[type=text], input[type=number], input[type=checkbox] {
 		border: 1px solid lightgray;
 	}
 	#app {
 		display: flex;
-	}
-	#header {
-		/*align-items: center;*/
 	}
 	#header > div {
 		padding: 5px;
@@ -52,11 +49,13 @@
 		display: flex;
 		flex-direction: row;
 		align-items: center;
+		flex-wrap: wrap;
 	}
 	.flex-col {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
+		align-items: center;
 	}
 	label {
 		margin: 0px 5px 0px 0px;
@@ -65,8 +64,20 @@
 		margin: 0px 10px 0px 0px;
 		padding: 5px;
 	}
+	.button {
+		background-color: white;
+		color: black;
+		border: 1px solid lightgray;
+		transition-duration: 0.4s;
+	}
+	.button:hover {
+		background-color: lightgray;
+	}
 	.add-remove {
 		width: 50px;
+	}
+	.submit {
+		width: 200px;
 	}
 </style>
 </head>
@@ -80,10 +91,10 @@
 				</select>
 			</div>
 			<div>
-				<input type="submit" value="signTx" @click="signTx(type)">
+				<input class="button submit" type="submit" value="signTx" @click="signTx(type)">
 			</div>
 			<div>
-				<input type="submit" value="signAndPublishTx" @click="signAndPublishTx(type)">
+				<input class="button submit" type="submit" value="signAndPublishTx" @click="signAndPublishTx(type)">
 			</div>
 		</div>
 
@@ -95,7 +106,14 @@
 				<div v-if="type == 3"><label>description:</label><input v-model="dataArray[type].data.description" type="text" name=""></div>
 				<div v-if="type == 3 || type == 5 || type == 6"><label>quantity:</label><input v-model="dataArray[type].data.quantity" type="text" name=""></div>
 				<div v-if="type == 3"><label>precision:</label><input v-model="dataArray[type].data.fee.precision" type="text" name=""></div>
-				<div v-if="type == 3 || type == 5 || type == 6"><label>reissuable:</label><input v-model="dataArray[type].data.reissuable" type="checkbox" name=""></div>
+				<div v-if="type == 3 || type == 5 || type == 6">
+					<label>reissuable:</label>
+					<select :value="dataArray[type].data.reissuable" @input="$event.target.value == 'true' ? dataArray[type].data.reissuable = true : dataArray[type].data.reissuable = false">
+						<option value="true">true</option>
+						<option value="false">false</option>
+					</select>
+					<!-- <input v-model="dataArray[type].data.reissuable" type="checkbox" name=""> -->
+				</div>
 				<div v-if="type == 4"><label>amount.assetId:</label><input v-model="dataArray[type].data.amount.assetId" type="text" name=""></div>
 				<div v-if="type == 4"><label>amount.tokens:</label><input v-model="dataArray[type].data.amount.tokens" type="text" name=""></div>
 				<div v-if="type == 4 || type == 8"><label>recipient:</label><input v-model="dataArray[type].data.recipient" type="text" name=""></div>
@@ -113,11 +131,11 @@
 				<div v-for="(item, index) in dataArray[type].data.transfers" class="flex-row">
 					<label>transfers[{{index}}].recipient:</label><input v-model="item.recipient" type="text" name="">
 					<label>transfers[{{index}}]amount:</label><input v-model="item.amount" type="text" name="">
-					<input class="add-remove" type="submit" value="-" @click="dataArray[type].data.transfers.splice(index, 1)">
-					<input class="add-remove" type="submit" value="+" @click="dataArray[type].data.transfers.splice(index + 1, 0, {recipient: '', amount: 0})">
+					<input class="button add-remove" type="submit" value="-" @click="dataArray[type].data.transfers.splice(index, 1)">
+					<input class="button add-remove" type="submit" value="+" @click="dataArray[type].data.transfers.splice(index + 1, 0, {recipient: '', amount: 0})">
 				</div>
 				<div v-if="dataArray[type].data.transfers.length == 0">
-					<input class="add-remove" type="submit" value="+" @click="dataArray[type].data.transfers.splice(0, 0, {recipient: '', amount: 0})">
+					<input class="button add-remove" type="submit" value="+" @click="dataArray[type].data.transfers.splice(0, 0, {recipient: '', amount: 0})">
 				</div>
 			</div>
 			<div id="params-third" v-if="type == 12" class="flex-col">
@@ -137,14 +155,18 @@
 					<div>
 						<label>data[{{index}}].value:</label>
 						<input v-if="item.type == 'string' || item.type == 'binary' || item.type == ''" v-model="item.value" type="text" name="">
-						<input v-if="item.type == 'boolean'" v-model="item.value" type="checkbox" name="">
+						<!-- <input v-if="item.type == 'boolean'" v-model="item.value" type="checkbox" name=""> -->
+						<select v-if="item.type == 'boolean'" :value="item.value" @input="$event.target.value == 'true' ? item.value = true : item.value = false">
+							<option value="true">true</option>
+							<option value="false">false</option>
+						</select>
 						<input v-if="item.type == 'integer'" v-model.number="item.value" type="number" name="">
 					</div>
-					<input class="add-remove" type="submit" value="-" @click="dataArray[type].data.data.splice(index, 1)">
-					<input class="add-remove" type="submit" value="+" @click="dataArray[type].data.data.splice(index + 1, 0, {type: 'integer', key: '', value: 0})">
+					<input class="button add-remove" type="submit" value="-" @click="dataArray[type].data.data.splice(index, 1)">
+					<input class="button add-remove" type="submit" value="+" @click="dataArray[type].data.data.splice(index + 1, 0, {type: 'integer', key: '', value: 0})">
 				</div>
 				<div v-if="dataArray[type].data.data.length == 0">
-					<input class="add-remove" type="submit" value="+" @click="dataArray[type].data.data.splice(0, 0, {type: 'integer', key: '', value: 0})">
+					<input class="button add-remove" type="submit" value="+" @click="dataArray[type].data.data.splice(0, 0, {type: 'integer', key: '', value: 0})">
 				</div>
 			</div>
 
@@ -281,7 +303,7 @@
 								tokens: '0.005'
 							},
 							data: [
-								{type: 'string', key: '', value: ''}
+							{type: 'string', key: '', value: ''}
 							]
 						}
 					},
@@ -311,11 +333,11 @@
 				}
 			},
 			created: function() {
-				// setTimeout(() => {
-				// 	if (!this.checkKeeper()) {
-				// 		alert('Please, install Waves Keeper');
-				// 	}
-				// }, 1000);
+				setTimeout(() => {
+					if (!this.checkKeeper()) {
+						alert('Please, install Waves Keeper');
+					}
+				}, 1000);
 			},
 			methods: {
 				checkKeeper: function() {
