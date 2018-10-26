@@ -33,14 +33,18 @@
 		align-items: center;
 		padding: 5px;
 	}
-	#result {
+	#result, #input-data {
 		padding: 5px;
 		overflow-x: auto;
 		border: 1px solid lightgray;
 		margin: 5px 0px 0px 0px;
+		max-width: 90vw;
 	}
-	#result-wrapper {
-		padding: 5px;
+	#result-wrapper, #input-data-wrapper {
+		margin: 5px;
+	}
+	#result-data-wrapper {
+		align-items:initial;
 	}
 	#footer {
 		padding: 5px;
@@ -172,10 +176,18 @@
 
 		</div>
 
-		<div id="result-wrapper">
-			Result:
-			<div id="result">
-				<pre>{{ result }}</pre>
+		<div class="flex-row" id="result-data-wrapper">
+			<div id="input-data-wrapper">
+				Data:
+				<div id="input-data">
+					<pre>{{ dataArray[type] }}</pre>
+				</div>
+			</div>
+			<div id="result-wrapper">
+				Result:
+				<div id="result">
+					<pre>{{ result }}</pre>
+				</div>
 			</div>
 		</div>
 
