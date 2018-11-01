@@ -112,6 +112,8 @@
 			</div>
 		</div>
 
+		<!-- <textarea :value="JSON.stringify(dataCurrent[type].data, null, ' ')" @input="dataCurrent[type].data = JSON.parse($event.target.value)"></textarea> -->
+
 		<div id="params" class="flex-col">
 			<div id="params-first" class="flex-col">
 				<div><label>fee.assetId:</label><input v-model="dataCurrent[type].data.fee.assetId" type="text" name=""></div>
@@ -206,7 +208,7 @@
 			<div id="input-data-wrapper">
 				Data[{{ index }}]:
 				<div id="input-data">
-					<textarea>{{ item.params }}</textarea>
+					<textarea :value="JSON.stringify(item.params, null, ' ')" @input="item.params = JSON.parse($event.target.value)"></textarea>
 				</div>
 			</div>
 			<div id="result-wrapper">
