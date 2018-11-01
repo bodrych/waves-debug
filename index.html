@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
 	<script src="https://unpkg.com/base-58@0.0.1/Base58.js"></script>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -33,14 +33,14 @@
 		align-items: center;
 		padding: 5px;
 	}
-	#result, #input-data {
+	#input-data, #result {
 		padding: 5px;
 		overflow-x: auto;
 		border: 1px solid lightgray;
 		margin: 5px 0px 0px 0px;
 		max-width: 90vw;
 	}
-	#result-wrapper, #input-data-wrapper {
+	#result-data-wrapper > div {
 		margin: 5px;
 	}
 	#result-data-wrapper {
@@ -83,6 +83,16 @@
 	.submit {
 		width: 200px;
 	}
+	textarea {
+		border: 0;
+    width: 300px;
+    height: 200px;
+    overflow-wrap: normal;
+    white-space: nowrap;
+	}
+	#data-buttons > input {
+		margin: 5px;
+	}
 </style>
 </head>
 <body>
@@ -95,55 +105,55 @@
 				</select>
 			</div>
 			<div>
-				<input class="button submit" type="submit" value="signTx" @click="signTx(type)">
+				<input class="button submit" type="submit" value="sign all" @click="run('sign')">
 			</div>
 			<div>
-				<input class="button submit" type="submit" value="signAndPublishTx" @click="signAndPublishTx(type)">
+				<input class="button submit" type="submit" value="sign and publish all" @click="run('pub')">
 			</div>
 		</div>
 
 		<div id="params" class="flex-col">
 			<div id="params-first" class="flex-col">
-				<div><label>fee.assetId:</label><input v-model="dataArray[type].data.fee.assetId" type="text" name=""></div>
-				<div><label>fee.tokens:</label><input v-model="dataArray[type].data.fee.tokens" type="text" name=""></div>
-				<div v-if="type == 3"><label>name:</label><input v-model="dataArray[type].data.name" type="text" name=""></div>
-				<div v-if="type == 3"><label>description:</label><input v-model="dataArray[type].data.description" type="text" name=""></div>
-				<div v-if="type == 3 || type == 5 || type == 6"><label>quantity:</label><input v-model="dataArray[type].data.quantity" type="text" name=""></div>
-				<div v-if="type == 3"><label>precision:</label><input v-model="dataArray[type].data.fee.precision" type="text" name=""></div>
+				<div><label>fee.assetId:</label><input v-model="dataCurrent[type].data.fee.assetId" type="text" name=""></div>
+				<div><label>fee.tokens:</label><input v-model="dataCurrent[type].data.fee.tokens" type="text" name=""></div>
+				<div v-if="type == 3"><label>name:</label><input v-model="dataCurrent[type].data.name" type="text" name=""></div>
+				<div v-if="type == 3"><label>description:</label><input v-model="dataCurrent[type].data.description" type="text" name=""></div>
+				<div v-if="type == 3 || type == 5 || type == 6"><label>quantity:</label><input v-model="dataCurrent[type].data.quantity" type="text" name=""></div>
+				<div v-if="type == 3"><label>precision:</label><input v-model="dataCurrent[type].data.fee.precision" type="text" name=""></div>
 				<div v-if="type == 3 || type == 5 || type == 6">
 					<label>reissuable:</label>
-					<select :value="dataArray[type].data.reissuable" @input="$event.target.value == 'true' ? dataArray[type].data.reissuable = true : dataArray[type].data.reissuable = false">
+					<select :value="dataCurrent[type].data.reissuable" @input="$event.target.value == 'true' ? dataCurrent[type].data.reissuable = true : dataCurrent[type].data.reissuable = false">
 						<option value="true">true</option>
 						<option value="false">false</option>
 					</select>
-					<!-- <input v-model="dataArray[type].data.reissuable" type="checkbox" name=""> -->
+					<!-- <input v-model="dataCurrent[type].data.reissuable" type="checkbox" name=""> -->
 				</div>
-				<div v-if="type == 4"><label>amount.assetId:</label><input v-model="dataArray[type].data.amount.assetId" type="text" name=""></div>
-				<div v-if="type == 4"><label>amount.tokens:</label><input v-model="dataArray[type].data.amount.tokens" type="text" name=""></div>
-				<div v-if="type == 4 || type == 8"><label>recipient:</label><input v-model="dataArray[type].data.recipient" type="text" name=""></div>
-				<div v-if="type == 4"><label>attachment:</label><input v-model="dataArray[type].data.attachment" type="text" name=""></div>
-				<div v-if="type == 5 || type == 6"><label>assetId:</label><input v-model="dataArray[type].data.assetId" type="text" name=""></div>
-				<div v-if="type == 8"><label>amount:</label><input v-model="dataArray[type].data.amount" type="text" name=""></div>
-				<div v-if="type == 9"><label>easeId:</label><input v-model="dataArray[type].data.leaseId" type="text" name=""></div>
-				<div v-if="type == 11"><label>totalAmount.assetId:</label><input v-model="dataArray[type].data.totalAmount.assetId" type="text" name=""></div>
-				<div v-if="type == 11"><label>totalAmount.tokens:</label><input v-model="dataArray[type].data.totalAmount.tokens" type="text" name=""></div>
-				<div v-if="type == 13"><label>script:</label><input v-model="dataArray[type].data.script" type="text" name=""></div>
-				<div v-if="type == 14"><label>minSponsoredAssetFee.assetId:</label><input v-model="dataArray[type].data.minSponsoredAssetFee.assetId" type="text" name=""></div>
-				<div v-if="type == 14"><label>minSponsoredAssetFee.tokens:</label><input v-model="dataArray[type].data.minSponsoredAssetFee.tokens" type="text" name=""></div>
+				<div v-if="type == 4"><label>amount.assetId:</label><input v-model="dataCurrent[type].data.amount.assetId" type="text" name=""></div>
+				<div v-if="type == 4"><label>amount.tokens:</label><input v-model="dataCurrent[type].data.amount.tokens" type="text" name=""></div>
+				<div v-if="type == 4 || type == 8"><label>recipient:</label><input v-model="dataCurrent[type].data.recipient" type="text" name=""></div>
+				<div v-if="type == 4"><label>attachment:</label><input v-model="dataCurrent[type].data.attachment" type="text" name=""></div>
+				<div v-if="type == 5 || type == 6"><label>assetId:</label><input v-model="dataCurrent[type].data.assetId" type="text" name=""></div>
+				<div v-if="type == 8"><label>amount:</label><input v-model="dataCurrent[type].data.amount" type="text" name=""></div>
+				<div v-if="type == 9"><label>easeId:</label><input v-model="dataCurrent[type].data.leaseId" type="text" name=""></div>
+				<div v-if="type == 11"><label>totalAmount.assetId:</label><input v-model="dataCurrent[type].data.totalAmount.assetId" type="text" name=""></div>
+				<div v-if="type == 11"><label>totalAmount.tokens:</label><input v-model="dataCurrent[type].data.totalAmount.tokens" type="text" name=""></div>
+				<div v-if="type == 13"><label>script:</label><input v-model="dataCurrent[type].data.script" type="text" name=""></div>
+				<div v-if="type == 14"><label>minSponsoredAssetFee.assetId:</label><input v-model="dataCurrent[type].data.minSponsoredAssetFee.assetId" type="text" name=""></div>
+				<div v-if="type == 14"><label>minSponsoredAssetFee.tokens:</label><input v-model="dataCurrent[type].data.minSponsoredAssetFee.tokens" type="text" name=""></div>
 			</div>
 			<div id="params-second" v-if="type == 11" class="flex-col">
-				<div v-for="(item, index) in dataArray[type].data.transfers" class="flex-row">
+				<div v-for="(item, index) in dataCurrent[type].data.transfers" class="flex-row">
 					<label>transfers[{{index}}].recipient:</label><input v-model="item.recipient" type="text" name="">
 					<label>transfers[{{index}}]amount:</label><input v-model="item.amount" type="text" name="">
-					<input class="button add-remove" type="submit" value="-" @click="dataArray[type].data.transfers.splice(index, 1)">
-					<input class="button add-remove" type="submit" value="+" @click="dataArray[type].data.transfers.splice(index + 1, 0, {recipient: '', amount: 0})">
+					<input class="button add-remove" type="submit" value="-" @click="dataCurrent[type].data.transfers.splice(index, 1)">
+					<input class="button add-remove" type="submit" value="+" @click="dataCurrent[type].data.transfers.splice(index + 1, 0, {recipient: '', amount: 0})">
 				</div>
-				<div v-if="dataArray[type].data.transfers.length == 0">
-					<input class="button add-remove" type="submit" value="+" @click="dataArray[type].data.transfers.splice(0, 0, {recipient: '', amount: 0})">
+				<div v-if="dataCurrent[type].data.transfers.length == 0">
+					<input class="button add-remove" type="submit" value="+" @click="dataCurrent[type].data.transfers.splice(0, 0, {recipient: '', amount: 0})">
 				</div>
 			</div>
 			<div id="params-third" v-if="type == 12" class="flex-col">
-				<div v-for="(item, index) in dataArray[type].data.data" class="flex-row">
+				<div v-for="(item, index) in dataCurrent[type].data.data" class="flex-row">
 					<div>
 						<label>data[{{index}}].type:</label>
 						<select v-model="item.type">
@@ -166,27 +176,43 @@
 						</select>
 						<input v-if="item.type == 'integer'" v-model.number="item.value" type="number" name="">
 					</div>
-					<input class="button add-remove" type="submit" value="-" @click="dataArray[type].data.data.splice(index, 1)">
-					<input class="button add-remove" type="submit" value="+" @click="dataArray[type].data.data.splice(index + 1, 0, {type: 'integer', key: '', value: 0})">
+					<input class="button add-remove" type="submit" value="-" @click="dataCurrent[type].data.data.splice(index, 1)">
+					<input class="button add-remove" type="submit" value="+" @click="dataCurrent[type].data.data.splice(index + 1, 0, {type: 'integer', key: '', value: 0})">
 				</div>
-				<div v-if="dataArray[type].data.data.length == 0">
-					<input class="button add-remove" type="submit" value="+" @click="dataArray[type].data.data.splice(0, 0, {type: 'integer', key: '', value: 0})">
+				<div v-if="dataCurrent[type].data.data.length == 0">
+					<input class="button add-remove" type="submit" value="+" @click="dataCurrent[type].data.data.splice(0, 0, {type: 'integer', key: '', value: 0})">
+				</div>
+			</div>
+
+			<div class="flex-row">
+				<div>
+					<input class="button submit" type="submit" value="Add data" @click="addData(type)">
+				</div>
+				<div>
+					<input class="button submit" type="submit" value="Clear data" @click="dataArray.splice(0)">
 				</div>
 			</div>
 
 		</div>
 
-		<div class="flex-row" id="result-data-wrapper">
+		<div class="flex-row" id="result-data-wrapper" v-for="(item, index) in dataArray">
+			<div id="data-buttons" class="flex-col">
+				<input v-model="item.run" type="checkbox" name="">
+				<input class="button submit" type="submit" value="remove" @click="dataArray.splice(index, 1)">
+				<input class="button submit" type="submit" value="sign" @click="signTx(index)">
+				<input class="button submit" type="submit" value="sign and publish" @click="signAndPublishTx(index)">
+				<!-- <input class="button submit" type="submit" value="change" @click="changeData(index)"> -->
+			</div>
 			<div id="input-data-wrapper">
-				Data:
+				Data[{{ index }}]:
 				<div id="input-data">
-					<pre>{{ dataArray[type] }}</pre>
+					<textarea>{{ item.params }}</textarea>
 				</div>
 			</div>
 			<div id="result-wrapper">
-				Result:
-				<div id="result">
-					<pre>{{ result }}</pre>
+				Result[{{ index }}]:
+				<div id="result" class="bordered">
+					<textarea>{{ item.result }}</textarea>
 				</div>
 			</div>
 		</div>
@@ -202,22 +228,23 @@
 			el: '#app',
 			data: {
 				type: 4,
-				result: '',
 				types: [
-				{id: 3, name: 'Issue'},
-				{id: 4, name: 'Transfer'},
-				{id: 5, name: 'Reissue'},
-				{id: 6, name: 'Burn'},
-				{id: 8, name: 'Lease'},
-				{id: 9, name: 'Cancel leasing'},
-				{id: 11, name: 'Mass Transfer'},
-				{id: 12, name: 'Data'},
-				{id: 13, name: 'Set script'},
-				{id: 14, name: 'Sponsorship'}
+					{id: 3, name: 'Issue'},
+					{id: 4, name: 'Transfer'},
+					{id: 5, name: 'Reissue'},
+					{id: 6, name: 'Burn'},
+					{id: 8, name: 'Lease'},
+					{id: 9, name: 'Cancel leasing'},
+					{id: 11, name: 'Mass Transfer'},
+					{id: 12, name: 'Data'},
+					{id: 13, name: 'Set script'},
+					{id: 14, name: 'Sponsorship'}
 				],
-				dataArray: {
+				dataArray: [],
+				dataCurrent: {
 					// issue
 					3: {
+						type: 3,
 						data: {
 							fee: {
 								assetId: 'WAVES',
@@ -232,6 +259,7 @@
 					},
 					// transfer
 					4: {
+						type: 4,
 						data: {
 							amount: {
 								assetId: '',
@@ -246,6 +274,7 @@
 					},
 					// reissue
 					5: {
+						type: 5,
 						data: {
 							fee: {
 								assetId: 'WAVES',
@@ -258,6 +287,7 @@
 					},
 					// burn
 					6: {
+						type: 6,
 						data: {
 							fee: {
 								assetId: 'WAVES',
@@ -270,6 +300,7 @@
 					},
 					// lease
 					8: {
+						type: 8,
 						data: {
 							fee: {
 								assetId: 'WAVES',
@@ -281,6 +312,7 @@
 					},
 					// cancel leasing
 					9: {
+						type: 9,
 						data: {
 							fee: {
 								assetId: 'WAVES',
@@ -291,6 +323,7 @@
 					},
 					// mass transfer
 					11: {
+						type: 11,
 						data: {
 							totalAmount: {
 								assetId: '',
@@ -310,6 +343,7 @@
 					},
 					// data tx
 					12: {
+						type: 12,
 						data: {
 							fee: {
 								assetId: 'WAVES',
@@ -322,6 +356,7 @@
 					},
 					// set script
 					13: {
+						type: 13,
 						data: {
 							fee: {
 								assetId: 'WAVES',
@@ -332,6 +367,7 @@
 					},
 					// sponsorship
 					14: {
+						type: 14,
 						data: {
 							minSponsoredAssetFee: {
 								assetId: '',
@@ -346,39 +382,64 @@
 				}
 			},
 			created: function() {
-				setTimeout(() => {
-					if (!this.checkKeeper()) {
-						alert('Please, install Waves Keeper');
-					}
-				}, 1000);
+				// setTimeout(() => {
+				// 	if (!this.checkKeeper()) {
+				// 		alert('Please, install Waves Keeper');
+				// 	}
+				// }, 1000);
 			},
 			methods: {
+				run: function(mode) {
+					switch (mode) {
+						case 'sign':
+							this.dataArray.forEach((item, i) => {
+								if (item.run) this.signTx(i);
+							});
+							break;
+						case 'pub':
+							this.dataArray.forEach((item, i) => {
+								if (item.run) this.signAndPublishTx(i);
+							});
+							break;
+						default:
+							this.dataArray.forEach((item, i) => {
+								if (item.run) this.signTx(i);
+							});
+							break;
+					}
+				},
+				addData: function(type) {
+					let params = JSON.parse(JSON.stringify(this.dataCurrent[type]));
+					this.dataArray.push({
+							run: true,
+							params: params,
+							result: ''
+						});
+				},
+				changeData: function(index) {
+					this.type = this.dataArray[index].params.type;
+					this.dataCurrent[this.type] = JSON.parse(JSON.stringify(this.dataArray[index].params));
+					this.dataArray.splice(index, 1);
+					return;
+				},
 				checkKeeper: function() {
 					return typeof window.Waves !== 'undefined';
 				},
-				signTx: async function(type) {
-					let data = this.dataArray[type].data;
-					let params = {
-						type: type,
-						data: data
-					}
+				signTx: async function(index) {
+					let params = this.dataArray[index].params;
 					try {
 						let res = await window.Waves.signTransaction(params);
-						this.result = res;
+						this.dataArray[index].result = res;
 						console.log(res);
 					} catch (err) {
 						alert(err.message);
 					}
 				},
-				signAndPublishTx: async function(type) {
-					let data = this.dataArray[type].data;
-					let params = {
-						type: type,
-						data: data
-					}
+				signAndPublishTx: async function(index) {
+					let params = this.dataArray[index].params;
 					try {
 						let res = await window.Waves.signAndPublishTransaction(params);
-						this.result = res;
+						this.dataArray[index].result = res;
 						console.log(res);
 					} catch (err) {
 						alert(err.message);
