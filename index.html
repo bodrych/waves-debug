@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.min.js"></script>
 	<script src="https://unpkg.com/base-58@0.0.1/Base58.js"></script>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -112,7 +112,7 @@
 			</div>
 		</div>
 
-		<!-- <textarea :value="JSON.stringify(dataCurrent[type].data, null, ' ')" @input="dataCurrent[type].data = JSON.parse($event.target.value)"></textarea> -->
+		<!-- <textarea :value="JSON.stringify(dataCurrent[type].data, null, '  ')" @input="dataCurrent[type].data = JSON.parse($event.target.value)"></textarea> -->
 
 		<div id="params" class="flex-col">
 			<div id="params-first" class="flex-col">
@@ -208,7 +208,7 @@
 			<div id="input-data-wrapper">
 				Data[{{ index }}]:
 				<div id="input-data">
-					<textarea :value="JSON.stringify(item.params, null, ' ')" @input="item.params = JSON.parse($event.target.value)"></textarea>
+					<textarea :value="JSON.stringify(item.params, null, '  ')" @input="item.params = JSON.parse($event.target.value)"></textarea>
 				</div>
 			</div>
 			<div id="result-wrapper">
