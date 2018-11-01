@@ -1,0 +1,85 @@
+body {
+	font-family: Consolas, monospace;
+	font-size: 14px;
+}
+.bordered {
+	border: 1px solid lightgray;
+	border-radius:5px;
+}
+input, select, textarea {
+	font-family: inherit;
+	font-size: inherit;
+}
+select, input[type=text], input[type=number], input[type=checkbox] {
+	border: 1px solid lightgray;
+}
+#app {
+	display: flex;
+}
+#header > div {
+	padding: 5px;
+}
+#params-first > div, #params-second > div, #params-third > div {
+	align-items: center;
+	padding: 5px;
+}
+#input-data, #result {
+	padding: 5px;
+	overflow-x: auto;
+	border: 1px solid lightgray;
+	margin: 5px 0px 0px 0px;
+	max-width: 90vw;
+}
+#result-data-wrapper > div {
+	margin: 5px;
+}
+#result-data-wrapper {
+	align-items:initial;
+}
+#footer {
+	padding: 5px;
+}
+.flex-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	flex-wrap: wrap;
+}
+.flex-col {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+label {
+	margin: 0px 5px 0px 0px;
+}
+input, select {
+	margin: 0px 10px 0px 0px;
+	padding: 5px;
+}
+.button {
+	background-color: white;
+	color: black;
+	border: 1px solid lightgray;
+	transition-duration: 0.4s;
+}
+.button:hover {
+	background-color: lightgray;
+}
+.add-remove {
+	width: 50px;
+}
+.submit {
+	width: 200px;
+}
+textarea {
+	border: 0;
+	width: 300px;
+	height: 200px;
+	overflow-wrap: normal;
+	white-space: pre;
+}
+#data-controls, #data-buttons > input {
+	margin: 5px;
+}
