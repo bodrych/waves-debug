@@ -156,13 +156,6 @@ var app = new Vue({
 			},
 		}
 	},
-	created: function() {
-		// setTimeout(() => {
-		// 	if (!this.checkKeeper()) {
-		// 		alert('Please, install Waves Keeper');
-		// 	}
-		// }, 1000);
-	},
 	methods: {
 		signAll: function() {
 			this.dataArray.forEach((item, i) => {
