@@ -4,7 +4,7 @@ body {
 }
 .bordered {
 	border: 1px solid lightgray;
-	border-radius:5px;
+	/*border-radius: 5px;*/
 }
 input, select, textarea {
 	font-family: inherit;
@@ -26,7 +26,6 @@ select, input[type=text], input[type=number], input[type=checkbox] {
 #input-data, #result {
 	padding: 5px;
 	overflow-x: auto;
-	border: 1px solid lightgray;
 	margin: 5px 0px 0px 0px;
 	max-width: 90vw;
 }

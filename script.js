@@ -3,16 +3,16 @@ var app = new Vue({
 	data: {
 		type: 4,
 		types: [
-		{id: 3, name: 'Issue'},
-		{id: 4, name: 'Transfer'},
-		{id: 5, name: 'Reissue'},
-		{id: 6, name: 'Burn'},
-		{id: 8, name: 'Lease'},
-		{id: 9, name: 'Cancel leasing'},
-		{id: 11, name: 'Mass Transfer'},
-		{id: 12, name: 'Data'},
-		{id: 13, name: 'Set script'},
-		{id: 14, name: 'Sponsorship'}
+			{id: 3, name: 'Issue'},
+			{id: 4, name: 'Transfer'},
+			{id: 5, name: 'Reissue'},
+			{id: 6, name: 'Burn'},
+			{id: 8, name: 'Lease'},
+			{id: 9, name: 'Cancel leasing'},
+			{id: 11, name: 'Mass Transfer'},
+			{id: 12, name: 'Data'},
+			{id: 13, name: 'Set script'},
+			{id: 14, name: 'Sponsorship'}
 		],
 		input: 'json',
 		dataArray: [],
@@ -164,24 +164,15 @@ var app = new Vue({
 		// }, 1000);
 	},
 	methods: {
-		run: function(mode) {
-			switch (mode) {
-				case 'sign':
-				this.dataArray.forEach((item, i) => {
-					if (item.run) this.signTx(i);
-				});
-				break;
-				case 'pub':
-				this.dataArray.forEach((item, i) => {
-					if (item.run) this.signAndPublishTx(i);
-				});
-				break;
-				default:
-				this.dataArray.forEach((item, i) => {
-					if (item.run) this.signTx(i);
-				});
-				break;
-			}
+		signAll: function() {
+			this.dataArray.forEach((item, i) => {
+				if (item.run) this.signTx(i);
+			});
+		},
+		pubAll: function() {
+			this.dataArray.forEach((item, i) => {
+				if (item.run) this.signAndPublishTx(i);
+			});
 		},
 		addData: function(type) {
 			let params = JSON.parse(JSON.stringify(this.dataCurrent[type]));

@@ -26,10 +26,10 @@
 				</select>
 			</div>
 			<div>
-				<input class="button submit" type="submit" value="sign all" @click="run('sign')">
+				<input class="button submit" type="submit" value="sign all" @click="signAll">
 			</div>
 			<div>
-				<input class="button submit" type="submit" value="sign and publish all" @click="run('pub')">
+				<input class="button submit" type="submit" value="sign and publish all" @click="pubAll">
 			</div>
 		</div>
 
@@ -39,12 +39,30 @@
 
 		<div id="params" class="flex-col" v-if="input == 'fields'">
 			<div id="params-first" class="flex-col">
-				<div><label>fee.assetId:</label><input v-model="dataCurrent[type].data.fee.assetId" type="text" name=""></div>
-				<div><label>fee.tokens:</label><input v-model="dataCurrent[type].data.fee.tokens" type="text" name=""></div>
-				<div v-if="type == 3"><label>name:</label><input v-model="dataCurrent[type].data.name" type="text" name=""></div>
-				<div v-if="type == 3"><label>description:</label><input v-model="dataCurrent[type].data.description" type="text" name=""></div>
-				<div v-if="type == 3 || type == 5 || type == 6"><label>quantity:</label><input v-model="dataCurrent[type].data.quantity" type="text" name=""></div>
-				<div v-if="type == 3"><label>precision:</label><input v-model="dataCurrent[type].data.fee.precision" type="text" name=""></div>
+				<div>
+					<label>fee.assetId:</label>
+					<input v-model="dataCurrent[type].data.fee.assetId" type="text" name="">
+				</div>
+				<div>
+					<label>fee.tokens:</label>
+					<input v-model="dataCurrent[type].data.fee.tokens" type="text" name="">
+				</div>
+				<div v-if="type == 3">
+					<label>name:</label>
+					<input v-model="dataCurrent[type].data.name" type="text" name="">
+				</div>
+				<div v-if="type == 3">
+					<label>description:</label>
+					<input v-model="dataCurrent[type].data.description" type="text" name="">
+				</div>
+				<div v-if="type == 3 || type == 5 || type == 6">
+					<label>quantity:</label>
+					<input v-model="dataCurrent[type].data.quantity" type="text" name="">
+				</div>
+				<div v-if="type == 3">
+					<label>precision:</label>
+					<input v-model="dataCurrent[type].data.fee.precision" type="text" name="">
+				</div>
 				<div v-if="type == 3 || type == 5 || type == 6">
 					<label>reissuable:</label>
 					<select :value="dataCurrent[type].data.reissuable" @input="$event.target.value == 'true' ? dataCurrent[type].data.reissuable = true : dataCurrent[type].data.reissuable = false">
@@ -53,23 +71,61 @@
 					</select>
 					<!-- <input v-model="dataCurrent[type].data.reissuable" type="checkbox" name=""> -->
 				</div>
-				<div v-if="type == 4"><label>amount.assetId:</label><input v-model="dataCurrent[type].data.amount.assetId" type="text" name=""></div>
-				<div v-if="type == 4"><label>amount.tokens:</label><input v-model="dataCurrent[type].data.amount.tokens" type="text" name=""></div>
-				<div v-if="type == 4 || type == 8"><label>recipient:</label><input v-model="dataCurrent[type].data.recipient" type="text" name=""></div>
-				<div v-if="type == 4"><label>attachment:</label><input v-model="dataCurrent[type].data.attachment" type="text" name=""></div>
-				<div v-if="type == 5 || type == 6"><label>assetId:</label><input v-model="dataCurrent[type].data.assetId" type="text" name=""></div>
-				<div v-if="type == 8"><label>amount:</label><input v-model="dataCurrent[type].data.amount" type="text" name=""></div>
-				<div v-if="type == 9"><label>easeId:</label><input v-model="dataCurrent[type].data.leaseId" type="text" name=""></div>
-				<div v-if="type == 11"><label>totalAmount.assetId:</label><input v-model="dataCurrent[type].data.totalAmount.assetId" type="text" name=""></div>
-				<div v-if="type == 11"><label>totalAmount.tokens:</label><input v-model="dataCurrent[type].data.totalAmount.tokens" type="text" name=""></div>
-				<div v-if="type == 13"><label>script:</label><input v-model="dataCurrent[type].data.script" type="text" name=""></div>
-				<div v-if="type == 14"><label>minSponsoredAssetFee.assetId:</label><input v-model="dataCurrent[type].data.minSponsoredAssetFee.assetId" type="text" name=""></div>
-				<div v-if="type == 14"><label>minSponsoredAssetFee.tokens:</label><input v-model="dataCurrent[type].data.minSponsoredAssetFee.tokens" type="text" name=""></div>
+				<div v-if="type == 4">
+					<label>amount.assetId:</label>
+					<input v-model="dataCurrent[type].data.amount.assetId" type="text" name="">
+				</div>
+				<div v-if="type == 4">
+					<label>amount.tokens:</label>
+					<input v-model="dataCurrent[type].data.amount.tokens" type="text" name="">
+				</div>
+				<div v-if="type == 4 || type == 8">
+					<label>recipient:</label>
+					<input v-model="dataCurrent[type].data.recipient" type="text" name="">
+				</div>
+				<div v-if="type == 4">
+					<label>attachment:</label>
+					<input v-model="dataCurrent[type].data.attachment" type="text" name="">
+				</div>
+				<div v-if="type == 5 || type == 6">
+					<label>assetId:</label>
+					<input v-model="dataCurrent[type].data.assetId" type="text" name="">
+				</div>
+				<div v-if="type == 8">
+					<label>amount:</label>
+					<input v-model="dataCurrent[type].data.amount" type="text" name="">
+				</div>
+				<div v-if="type == 9">
+					<label>easeId:</label>
+					<input v-model="dataCurrent[type].data.leaseId" type="text" name="">
+				</div>
+				<div v-if="type == 11">
+					<label>totalAmount.assetId:</label>
+					<input v-model="dataCurrent[type].data.totalAmount.assetId" type="text" name="">
+				</div>
+				<div v-if="type == 11">
+					<label>totalAmount.tokens:</label>
+					<input v-model="dataCurrent[type].data.totalAmount.tokens" type="text" name="">
+				</div>
+				<div v-if="type == 13">
+					<label>script:</label>
+					<input v-model="dataCurrent[type].data.script" type="text" name="">
+				</div>
+				<div v-if="type == 14">
+					<label>minSponsoredAssetFee.assetId:</label>
+					<input v-model="dataCurrent[type].data.minSponsoredAssetFee.assetId" type="text" name="">
+				</div>
+				<div v-if="type == 14">
+					<label>minSponsoredAssetFee.tokens:</label>
+					<input v-model="dataCurrent[type].data.minSponsoredAssetFee.tokens" type="text" name="">
+				</div>
 			</div>
 			<div id="params-second" v-if="type == 11" class="flex-col">
 				<div v-for="(item, index) in dataCurrent[type].data.transfers" class="flex-row">
-					<label>transfers[{{index}}].recipient:</label><input v-model="item.recipient" type="text" name="">
-					<label>transfers[{{index}}]amount:</label><input v-model="item.amount" type="text" name="">
+					<label>transfers[{{index}}].recipient:</label>
+					<input v-model="item.recipient" type="text" name="">
+					<label>transfers[{{index}}]amount:</label>
+					<input v-model="item.amount" type="text" name="">
 					<input class="button add-remove" type="submit" value="-" @click="dataCurrent[type].data.transfers.splice(index, 1)">
 					<input class="button add-remove" type="submit" value="+" @click="dataCurrent[type].data.transfers.splice(index + 1, 0, {recipient: '', amount: 0})">
 				</div>
@@ -89,7 +145,8 @@
 						</select>
 					</div>
 					<div>
-						<label>data[{{index}}].key:</label><input v-model="item.key" type="text" name="">
+						<label>data[{{index}}].key:</label>
+						<input v-model="item.key" type="text" name="">
 					</div>
 					<div>
 						<label>data[{{index}}].value:</label>
@@ -129,7 +186,7 @@
 			</div>
 			<div id="input-data-wrapper">
 				Data[{{ index }}]:
-				<div id="input-data">
+				<div id="input-data" class="bordered">
 					<textarea :value="JSON.stringify(item.params, null, '  ')" @input="item.params = JSON.parse($event.target.value)"></textarea>
 				</div>
 			</div>
