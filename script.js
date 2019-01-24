@@ -1,4 +1,4 @@
-var app = new Vue({
+const app = new Vue({
 	el: '#app',
 	data: {
 		type: 4,
@@ -12,7 +12,8 @@ var app = new Vue({
 			{id: 11, name: 'Mass Transfer'},
 			{id: 12, name: 'Data'},
 			{id: 13, name: 'Set script'},
-			{id: 14, name: 'Sponsorship'}
+			{id: 14, name: 'Sponsorship'},
+			{id: 15, name: 'Set Asset Script'},
 		],
 		input: 'json',
 		dataArray: [],
@@ -29,7 +30,8 @@ var app = new Vue({
 					description: '',
 					quantity: 0,
 					precision: 0,
-					reissuable: false
+					reissuable: false,
+					script: '',
 				}
 			},
 			// transfer
@@ -152,6 +154,18 @@ var app = new Vue({
 						assetId: 'WAVES',
 						tokens: ''
 					}
+				}
+			},
+			// set asset script
+			15: {
+				type: 15,
+				data: {
+					fee: {
+						assetId: 'WAVES',
+						tokens: '1.0'
+					},
+					assetId: '',
+					script: ''
 				}
 			},
 		}
