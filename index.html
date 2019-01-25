@@ -90,7 +90,7 @@
 					<label>attachment:</label>
 					<input v-model="dataCurrent[type].data.attachment" type="text" name="">
 				</div>
-				<div v-if="type == 5 || type == 6">
+				<div v-if="type == 5 || type == 6 || type == 15">
 					<label>assetId:</label>
 					<input v-model="dataCurrent[type].data.assetId" type="text" name="">
 				</div>
@@ -110,7 +110,7 @@
 					<label>totalAmount.tokens:</label>
 					<input v-model="dataCurrent[type].data.totalAmount.tokens" type="text" name="">
 				</div>
-				<div v-if="type == 13">
+				<div v-if="type == 13 || type == 15 || type == 3">
 					<label>script:</label>
 					<input v-model="dataCurrent[type].data.script" type="text" name="">
 				</div>
