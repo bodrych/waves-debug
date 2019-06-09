@@ -19,7 +19,7 @@ select, input[type=text], input[type=number], input[type=checkbox] {
 #header > div {
 	padding: 5px;
 }
-#params-first > div, #params-second > div, #params-third > div {
+.subparams > div {
 	align-items: center;
 	padding: 5px;
 }

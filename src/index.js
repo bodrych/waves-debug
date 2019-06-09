@@ -1,3 +1,14 @@
+import Vue from 'vue'
+import BootstrapVue from 'bootstrap-vue'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+import axios from 'axios'
+import sha256 from 'js-sha256'
+import crypto from 'crypto'
+import Base58 from 'base-58'
+
+Vue.use(BootstrapVue)
+
 const app = new Vue({
 	el: '#app',
 	data: {
@@ -14,9 +25,16 @@ const app = new Vue({
 			{id: 13, name: 'Set script'},
 			{id: 14, name: 'Sponsorship'},
 			{id: 15, name: 'Set Asset Script'},
+			{id: 16, name: 'Invoke Script'},
 		],
-		input: 'json',
+		input: 'fields',
 		dataArray: [],
+		alert: {
+			dismissSecs: 5,
+			dismissCountDown: 0,
+			variant: 'info',
+			message: ''
+		},
 		dataCurrent: {
 			// issue
 			3: {
@@ -39,7 +57,7 @@ const app = new Vue({
 				type: 4,
 				data: {
 					amount: {
-						assetId: '',
+						assetId: 'WAVES',
 						tokens: ''
 					},
 					fee: {
@@ -113,7 +131,7 @@ const app = new Vue({
 					transfers: [
 					{
 						recipient: '',
-						ammount: ''
+						amount: '0'
 					}
 					]
 				}
@@ -127,7 +145,7 @@ const app = new Vue({
 						tokens: '0.005'
 					},
 					data: [
-					{type: 'string', key: '', value: ''}
+						{type: 'string', key: '', value: ''}
 					]
 				}
 			},
@@ -168,56 +186,85 @@ const app = new Vue({
 					script: ''
 				}
 			},
+			// invoke script
+			16: {
+				type: 16,
+				data: {
+					fee: {
+						assetId: 'WAVES',
+						tokens: '0.005'
+					},
+					dApp: '',
+					call: {
+						args: [{ key: '', type: 'string', value: '' }],
+						function: '',
+					},
+					payment: [{
+						tokens: '0.001',
+						assetId: 'WAVES',
+					}]
+					// senderPublicKey: '',
+				}
+			},
 		}
 	},
 	methods: {
 		signAll: function() {
 			this.dataArray.forEach((item, i) => {
-				if (item.run) this.signTx(i);
-			});
+				if (item.run) this.signTx(i)
+			})
 		},
 		pubAll: function() {
 			this.dataArray.forEach((item, i) => {
-				if (item.run) this.signAndPublishTx(i);
-			});
+				if (item.run) this.signAndPublishTx(i)
+			})
 		},
 		addData: function(type) {
-			let params = JSON.parse(JSON.stringify(this.dataCurrent[type]));
+			let params = JSON.parse(JSON.stringify(this.dataCurrent[type]))
 			this.dataArray.push({
 				run: true,
 				params: params,
-				result: ''
-			});
+				result: null
+			})
 		},
 		changeData: function(index) {
-			this.type = this.dataArray[index].params.type;
-			this.dataCurrent[this.type] = JSON.parse(JSON.stringify(this.dataArray[index].params));
-			this.dataArray.splice(index, 1);
-			return;
+			this.type = this.dataArray[index].params.type
+			this.dataCurrent[this.type] = JSON.parse(JSON.stringify(this.dataArray[index].params))
+			this.dataArray.splice(index, 1)
+			return
 		},
 		checkKeeper: function() {
-			return typeof window.Waves !== 'undefined';
+			return typeof window.WavesKeeper !== 'undefined'
 		},
 		signTx: async function(index) {
-			let params = this.dataArray[index].params;
+			let params = this.dataArray[index].params
 			try {
-				let res = await window.Waves.signTransaction(params);
-				this.dataArray[index].result = res;
-				console.log(res);
+				let res = await window.WavesKeeper.signTransaction(params)
+				this.dataArray[index].result = res
+				console.log(res)
 			} catch (err) {
-				alert(err.message);
+				this.showAlert(err.message, 'warning')
+				console.log(err)
 			}
 		},
 		signAndPublishTx: async function(index) {
-			let params = this.dataArray[index].params;
+			let params = this.dataArray[index].params
 			try {
-				let res = await window.Waves.signAndPublishTransaction(params);
-				this.dataArray[index].result = res;
-				console.log(res);
+				let res = await window.WavesKeeper.signAndPublishTransaction(params)
+				this.dataArray[index].result = res
+				console.log(res)
 			} catch (err) {
-				alert(err.message);
-				console.log(err);
+				this.showAlert(err.message, 'warning')
+				console.log(err)
 			}
-		}
+		},
+		setAlertCount: function (count) {
+			this.alert.dismissCountDown = count
+		},
+		showAlert: function (message, variant) {
+			this.alert.dismissCountDown = this.alert.dismissSecs
+			this.alert.variant = variant
+			this.alert.message = message
+		},
 	}
 });

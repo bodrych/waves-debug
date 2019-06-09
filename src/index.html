@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAABFvgAARb4B0IHyYgAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAIpSURBVHic5du5edtAFEXhM66HqM/OBGVWexz2ohBO/PhJFJZZ3oLlNkCcP5BIYACByzmPj8fjb+Q1pKgPzjmPwBtASunjdrv9ibiOEICv8c8LCUJwB5iLl0UguAKsxcu8EdwASuJlngguADXxMi8Ec4CWeJkHgilAT7zMGsEMQCNeZolgAqAZL7NCUAewiJdZIKgCWMbLtBHUADziZZoIKgCe8TIthG6AiHiZBkIXQGS8rBehGWAP8bIehCaAPcXLWhGqAfYYL2tBqALYc7ysFqEY4AjxshqEIoAjxctKETYBjhgvK0FYBThyvGwLYRHgDPGyNYRZgDPFy5YQfgCcMV42h/AN4MzxsleEJ8AV4mVfERJcK14mCOmK8bKU0sevaZo+oy8katM0fSaA+/3+O6UUelAhYOMwDO/PP4IXQxiHYXiHl3+DF0F4xsPMF6GTI3yLh4WvwidF+BEPKz+GToYwGw8bP4dPgrAYDwU3RA6OsBoPhbfEDoqwGQ8VN0UPhlAUD5W3xQ+CUBwPDQ9Gdo5QFQ+Nj8Z2ilAdDx0PR3eG0BQPnY/Hd4LQHA8KBySCEbriQemITBBCdzwoHpJyRlCJB+Vjck4IavFgcFDSGEE1HoyOyhohqMeD4WFpZQSTeDA+Lq+EYBYPDi9MdCKYxoPTKzONCObx4PjSVCWCSzw4vzZXiOAWDwEvTm4guMZD0KuzCwju8RD48vQLQkh8+HLO4//zCWH7B6TVRCpVqUZ2AAAAAElFTkSuQmCC" />
+	<title>Waves Debug</title>
+</head>
+<body>
+	<div id="app">
+		<b-row align-h="center">
+			<b-alert style="position: fixed; z-index: 2000; bottom: 0" :show="alert.dismissCountDown" dismissible fade :variant="alert.variant" @dismissed="alert.dismissCountDown = 0" @dismiss-count-down="setAlertCount">
+				{{ alert.message }}
+			</b-alert>
+		</b-row>
+		<b-navbar type="dark" variant="primary" sticky>
+			<b-navbar-brand href="#">
+				<span>
+					Waves Debug
+				</span>
+			</b-navbar-brand>
+			<b-navbar-nav class="ml-auto">
+				<b-nav-item href="https://github.com/bodrych/waves-debug">
+					Github
+				</b-nav-item>
+				<b-nav-item href="https://forum.wavesplatform.com/t/the-waves-debug/3762">
+					Forum thread
+				</b-nav-item>
+			</b-navbar-nav>
+		</b-navbar>
+		<b-container style="padding: 15px">
+			<b-row>
+				<b-col>
+					<label>Input mode</label>
+					<b-form-select v-model="input">
+						<option value="json">json</option>
+						<option value="fields">fields</option>
+					</b-form-select>
+				</b-col>
+				<b-col>
+					<label>Transaction type</label>
+					<b-form-select v-model="type">
+						<option :value="type.id" v-for="type in types">{{ type.name }}</option>
+					</b-form-select>
+				</b-col>
+			</b-row>
+			<b-row class="mt-3" v-if="input == 'json'">
+				<b-col>
+					<b-form-textarea
+						:value="JSON.stringify(dataCurrent[type].data, null, '\t')"
+						@input="dataCurrent[type].data = JSON.parse($event)"
+						rows="3"
+						max-rows="10"
+					></b-form-textarea>
+				</b-col>
+			</b-row>
+			<template v-if="input == 'fields'">
+				<b-row class="mt-3">
+					<b-col>
+						<b-input-group prepend="fee.assetId">
+							<b-form-input v-model="dataCurrent[type].data.fee.assetId" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+					<b-col>
+						<b-input-group prepend="fee.tokens">
+							<b-form-input v-model="dataCurrent[type].data.fee.tokens" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+				</b-row>
+				<b-row v-if="type == 16">
+					<b-col>
+						<b-input-group prepend="dApp" class="mt-1">
+							<b-form-input v-model="dataCurrent[type].data.dApp" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+					<b-col>
+						<b-input-group prepend="call.function" class="mt-1">
+							<b-form-input v-model="dataCurrent[type].data.call.function" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+				</b-row>
+				<b-row v-if="type == 3">
+					<b-col>
+						<b-input-group prepend="name" class="mt-1">
+							<b-form-input v-model="dataCurrent[type].data.name" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+					<b-col>
+						<b-input-group prepend="precision" class="mt-1">
+							<b-form-input v-model="dataCurrent[type].data.precision" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+				</b-row>
+				<b-row v-if="type == 3">
+					<b-col>
+						<b-input-group prepend="description" class="mt-1">
+							<b-form-input v-model="dataCurrent[type].data.description" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+				</b-row>
+				<b-row v-if="type == 3 || type == 5 || type == 6">
+					<b-col>
+						<b-input-group prepend="reissuable" class="mt-1">
+							<b-form-select :value="dataCurrent[type].data.reissuable" @input="JSON.parse($event) == 'true' ? dataCurrent[type].data.reissuable = true : dataCurrent[type].data.reissuable = false">
+								<option value="true">true</option>
+								<option value="false">false</option>
+							</b-form-select>
+						</b-input-group>
+					</b-col>
+					<b-col>
+						<b-input-group prepend="quantity" class="mt-1">
+							<b-form-input v-model="dataCurrent[type].data.quantity" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+				</b-row>
+				<b-row v-if="type == 4">
+					<b-col>
+						<b-input-group prepend="amount.assetId" class="mt-1">
+							<b-form-input v-model="dataCurrent[type].data.amount.assetId" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+					<b-col>
+						<b-input-group prepend="amount.tokens" class="mt-1">
+							<b-form-input v-model="dataCurrent[type].data.amount.tokens" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+				</b-row>
+				<b-row v-if="type == 4 || type == 8">
+					<b-col>
+						<b-input-group prepend="recipient" class="mt-1">
+							<b-form-input v-model="dataCurrent[type].data.recipient" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+				</b-row>
+				<b-row v-if="type == 4">
+					<b-col>
+						<b-input-group prepend="attachment" class="mt-1">
+							<b-form-input v-model="dataCurrent[type].data.attachment" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+				</b-row>
+				<b-row v-if="type == 5 || type == 6 || type == 15">
+					<b-col>
+						<b-input-group prepend="assetId" class="mt-1">
+							<b-form-input v-model="dataCurrent[type].data.assetId" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+				</b-row>
+				<b-row v-if="type == 8">
+					<b-col>
+						<b-input-group prepend="amount" class="mt-1">
+							<b-form-input v-model="dataCurrent[type].data.amount" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+				</b-row>
+				<b-row v-if="type == 9">
+					<b-col>
+						<b-input-group prepend="leaseId" class="mt-1">
+							<b-form-input v-model="dataCurrent[type].data.leaseId" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+				</b-row>
+				<b-row v-if="type == 11">
+					<b-col>
+						<b-input-group prepend="totalAmount.assetId" class="mt-1">
+							<b-form-input v-model="dataCurrent[type].data.totalAmount.assetId" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+					<b-col>
+						<b-input-group prepend="totalAmount.tokens" class="mt-1">
+							<b-form-input v-model="dataCurrent[type].data.totalAmount.tokens" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+				</b-row>
+				<b-row v-if="type == 13 || type == 15 || type == 3">
+					<b-col>
+						<b-input-group prepend="script" class="mt-1">
+							<b-form-input v-model="dataCurrent[type].data.script" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+				</b-row>
+				<b-row v-if="type == 14">
+					<b-col>
+						<b-input-group prepend="minSponsoredAssetFee.assetId" class="mt-1">
+							<b-form-input v-model="dataCurrent[type].data.minSponsoredAssetFee.assetId" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+					<b-col>
+						<b-input-group prepend="minSponsoredAssetFee.tokens" class="mt-1">
+							<b-form-input v-model="dataCurrent[type].data.minSponsoredAssetFee.tokens" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+				</b-row>
+				<b-row v-if="type == 11" v-for="(item, index) in dataCurrent[type].data.transfers" class="mt-1" :key="index">
+					<b-col>
+						<b-input-group :prepend="'transfers[' + index + '].recipient'">
+							<b-form-input v-model="item.recipient" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+					<b-col>
+						<b-input-group :prepend="'transfers[' + index + '].amount'">
+							<b-form-input v-model="item.amount" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+					<b-col cols="1">
+						<b-button @click="dataCurrent[type].data.transfers.splice(index, 1)" variant="outline-secondary" block>
+							-
+						</b-button>
+					</b-col>
+				</b-row>
+				<b-row v-if="type == 11" class="mt-1">
+					<b-col>
+						<b-button @click="dataCurrent[type].data.transfers.splice(dataCurrent[type].data.transfers.length, 0, {recipient: '', amount: 0})" variant="outline-secondary">
+								add transaction
+						</b-button>
+					</b-col>
+				</b-row>
+				<b-row v-if="type == 12" v-for="(item, index) in dataCurrent[type].data.data" class="mt-1" :key="index">
+					<b-col>
+						<b-input-group :prepend="'data[' + index + '].type'">
+							<b-form-select v-model="item.type">
+								<option value="integer">integer</option>
+								<option value="string">string</option>
+								<option value="boolean">boolean</option>
+								<option value="binary">binary</option>
+							</b-form-select>
+						</b-input-group>
+					</b-col>
+					<b-col>
+						<b-input-group :prepend="'data[' + index + '].key'">
+							<b-form-input v-model="item.key" type="text">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+					<b-col>
+						<b-input-group :prepend="'data[' + index + '].value'">
+							<b-form-input v-if="item.type == 'string' || item.type == 'binary' || item.type == ''" v-model="item.value" type="text">
+							</b-form-input>
+							<b-form-select v-if="item.type == 'boolean'" :value="item.value" @input="JSON.parse($event) == 'true' ? item.value = true : item.value = false">
+								<option value="true">true</option>
+								<option value="false">false</option>
+							</b-form-select>
+							<b-form-input v-if="item.type == 'integer'" v-model.number="item.value" type="number" name="">
+							</b-form-input>
+						</b-input-group>
+					</b-col>
+					<b-col cols="1">
+						<b-button @click="dataCurrent[type].data.data.splice(index, 1)" variant="outline-secondary" block>
+							-
+						</b-button>
+					</b-col>
+				</b-row>
+				<b-row v-if="type == 12" class="mt-1">
+					<b-col>
+						<b-button @click="dataCurrent[type].data.data.splice(dataCurrent[type].data.data.length, 0, {type: 'integer', key: '', value: 0})" variant="outline-secondary">
+								add data entry
+						</b-button>
+					</b-col>
+				</b-row>
+
+				<template  v-if="type == 16">
+					<b-row v-for="(item, index) in dataCurrent[type].data.call.args" class="mt-1" :key="'data-' + index">
+						<b-col>
+							<b-input-group :prepend="'args[' + index + '].type'">
+								<b-form-select v-model="item.type">
+									<option value="integer">integer</option>
+									<option value="string">string</option>
+									<option value="boolean">boolean</option>
+									<option value="binary">binary</option>
+								</b-form-select>
+							</b-input-group>
+						</b-col>
+						<b-col>
+							<b-input-group :prepend="'args[' + index + '].key'">
+								<b-form-input v-model="item.key" type="text">
+								</b-form-input>
+							</b-input-group>
+						</b-col>
+						<b-col>
+							<b-input-group :prepend="'args[' + index + '].value'">
+								<b-form-input v-if="item.type == 'string' || item.type == 'binary' || item.type == ''" v-model="item.value" type="text">
+								</b-form-input>
+								<b-form-select v-if="item.type == 'boolean'" :value="item.value" @input="JSON.parse($event) == 'true' ? item.value = true : item.value = false">
+									<option value="true">true</option>
+									<option value="false">false</option>
+								</b-form-select>
+								<b-form-input v-if="item.type == 'integer'" v-model.number="item.value" type="number" name="">
+								</b-form-input>
+							</b-input-group>
+						</b-col>
+						<b-col cols="1">
+							<b-button @click="dataCurrent[type].data.call.args.splice(index, 1)" variant="outline-secondary" block>
+								-
+							</b-button>
+						</b-col>
+					</b-row>
+					<b-row class="mt-1">
+						<b-col>
+							<b-button @click="dataCurrent[type].data.call.args.splice(dataCurrent[type].data.call.args.length, 0, {type: 'integer', key: '', value: 0})" variant="outline-secondary">
+									add argument
+							</b-button>
+						</b-col>
+					</b-row>
+
+
+					<b-row v-for="(item, index) in dataCurrent[type].data.payment" class="mt-1" :key="index">
+						<b-col>
+							<b-input-group :prepend="'payment[' + index + '].assetId'">
+								<b-form-input v-model="item.assetId" type="text">
+								</b-form-input>
+							</b-input-group>
+						</b-col>
+						<b-col>
+							<b-input-group :prepend="'payment[' + index + '].tokens'">
+								<b-form-input v-model="item.tokens" type="text">
+								</b-form-input>
+							</b-input-group>
+						</b-col>
+						<b-col cols="1">
+							<b-button @click="dataCurrent[type].data.payment.splice(index, 1)" variant="outline-secondary" block>
+								-
+							</b-button>
+						</b-col>
+					</b-row>
+					<b-row class="mt-1" v-if="dataCurrent[type].data.payment.length == 0">
+						<b-col>
+							<b-button @click="dataCurrent[type].data.payment.splice(dataCurrent[type].data.payment.length, 0, {tokens: '0.001', assetId: 'WAVES'})" variant="outline-secondary">
+									add payment
+							</b-button>
+						</b-col>
+					</b-row>
+				</template>
+			</template>
+
+			<b-row class="mt-3">
+				<b-col>
+					<b-button @click="addData(type)" variant="outline-primary">
+						Add data
+					</b-button>
+					<template v-if="dataArray.length > 0">
+						<b-button @click="dataArray.splice(0)" variant="outline-primary">
+							Clear data
+						</b-button>
+						<b-button @click="signAll" variant="outline-primary">
+							Sign all
+						</b-button>
+						<b-button @click="pubAll" variant="outline-primary">
+							Sign and publish all
+						</b-button>
+					</template>
+				</b-col>
+			</b-row>
+
+			<div class="mt-3" v-for="(item, index) in dataArray">
+				<b-row class="mt-1">
+					<b-col>
+						<b-button @click="item.run = !item.run" :variant="item.run ? 'outline-primary' : 'outline-secondary'">
+							Data[{{ index }}]
+						</b-button>
+						<b-button @click="dataArray.splice(index, 1)" variant="outline-primary">
+							Remove
+						</b-button>
+						<b-button @click="signTx(index)" variant="outline-primary">
+							Sign
+						</b-button>
+						<b-button @click="signAndPublishTx(index)" variant="outline-primary">
+							Publish
+						</b-button>
+					</b-col>
+				</b-row>
+				<b-row class="mt-1">
+					<b-col>
+						<b-form-textarea
+							:value="JSON.stringify(item.params, null, '\t')" @input="item.params = JSON.parse($event)"
+							rows="3"
+							max-rows="10"
+						></b-form-textarea>
+					</b-col>
+					<b-col>
+						<b-form-textarea
+							:value="item.result"
+							rows="3"
+							max-rows="10"
+						></b-form-textarea>
+					</b-col>
+				</b-row>
+			</div>
+		</b-container>
+	</div>
+</body>
+</html>
